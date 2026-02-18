@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Base application theme (Compose handles styling, this is minimal) -->
+    <style name="Theme.Shalawat" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+
+    <!-- Splash screen theme using AndroidX SplashScreen API -->
+    <style name="Theme.Shalawat.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">#FF006B63</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="postSplashScreenTheme">@style/Theme.Shalawat</item>
+    </style>
+
+</resources>
