@@ -1,0 +1,4 @@
+com.example.shalawat
+string app_name
+style Theme_Shalawat
+style Theme_Shalawat_Splash

@@ -11,12 +11,12 @@
 
 ---
 
-## Phase 2: Data Layer
-- [ ] Create `ShalawatEntity.kt` — Room entity with all columns (id, title, arabicText, transliteration, translation, audioFileName, audioSource, createdAt, updatedAt)
-- [ ] Create `ShalawatDao.kt` — DAO interface with `getAllShalawat()`, `getShalawatById()`, `insert()`, `update()`, `delete()`
-- [ ] Create `ShalawatDatabase.kt` — Room database class with entity registration and database builder
-- [ ] Create `AudioFileManager.kt` — handles copy/delete of user-added audio files in `context.filesDir/audio/`
-- [ ] Create `ShalawatRepositoryImpl.kt` — implements `ShalawatRepository` interface, delegates to DAO and AudioFileManager
+## Phase 2: Data Layer ✅
+- [x] Create `ShalawatEntity.kt` — Room entity with all columns (id, title, arabicText, transliteration, translation, audioFileName, audioSource, createdAt, updatedAt)
+- [x] Create `ShalawatDao.kt` — DAO interface with `getAllShalawat()`, `getShalawatById()`, `insert()`, `update()`, `delete()`
+- [x] Create `ShalawatDatabase.kt` — Room database class with entity registration and database builder
+- [x] Create `AudioFileManager.kt` — handles copy/delete of user-added audio files in `context.filesDir/audio/`
+- [x] Create `ShalawatRepositoryImpl.kt` — implements `ShalawatRepository` interface, delegates to DAO and AudioFileManager
 
 ---
 
