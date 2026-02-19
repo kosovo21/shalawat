@@ -1,4 +1,5 @@
 com.example.shalawat
+drawable ic_logo
 string app_name
 style Theme_Shalawat
 style Theme_Shalawat_Splash

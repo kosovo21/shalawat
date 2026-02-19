@@ -38,11 +38,11 @@
 
 ---
 
-## Phase 5: Splash Screen
-- [ ] Add splash screen theme in `themes.xml` using AndroidX SplashScreen API
-- [ ] Create `SplashScreen.kt` — Compose screen with logo, app name, intro sound
-- [ ] Add intro sound file to `assets/audio/` (or `res/raw/`)
-- [ ] Implement ~2s delay then navigate to HomeScreen
+## Phase 5: Splash Screen ✅
+- [x] Add splash screen theme in `themes.xml` using AndroidX SplashScreen API
+- [x] Create `SplashScreen.kt` — Compose screen with logo, app name, intro sound
+- [x] Add intro sound file to `assets/audio/` (or `res/raw/`)
+- [x] Implement ~2s delay then navigate to HomeScreen
 
 ---
 
