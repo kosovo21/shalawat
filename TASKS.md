@@ -20,14 +20,14 @@
 
 ---
 
-## Phase 3: Domain Layer
-- [ ] Create `Shalawat.kt` — clean domain model (no Room annotations)
-- [ ] Create `ShalawatRepository.kt` — repository interface (contract)
-- [ ] Create `GetAllShalawatUseCase.kt`
-- [ ] Create `GetShalawatByIdUseCase.kt`
-- [ ] Create `SaveShalawatUseCase.kt` (handles both insert and update)
-- [ ] Create `DeleteShalawatUseCase.kt`
-- [ ] Add entity ↔ domain model mappers (extension functions)
+## Phase 3: Domain Layer ✅
+- [x] Create `Shalawat.kt` — clean domain model (no Room annotations)
+- [x] Create `ShalawatRepository.kt` — repository interface (contract)
+- [x] Create `GetAllShalawatUseCase.kt`
+- [x] Create `GetShalawatByIdUseCase.kt`
+- [x] Create `SaveShalawatUseCase.kt` (handles both insert and update)
+- [x] Create `DeleteShalawatUseCase.kt`
+- [x] Add entity ↔ domain model mappers (extension functions)
 
 ---
 
