@@ -31,10 +31,10 @@
 
 ---
 
-## Phase 4: Dependency Injection (Hilt Modules)
-- [ ] Create `DatabaseModule.kt` — provides `ShalawatDatabase` and `ShalawatDao`
-- [ ] Create `RepositoryModule.kt` — binds `ShalawatRepositoryImpl` to `ShalawatRepository`
-- [ ] Create `PlayerModule.kt` — provides `ExoPlayer` instance
+## Phase 4: Dependency Injection (Hilt Modules) ✅
+- [x] Create `DatabaseModule.kt` — provides `ShalawatDatabase` and `ShalawatDao`
+- [x] Create `RepositoryModule.kt` — binds `ShalawatRepositoryImpl` to `ShalawatRepository`
+- [x] Create `PlayerModule.kt` — provides `ExoPlayer` instance
 
 ---
 
