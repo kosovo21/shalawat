@@ -46,10 +46,10 @@
 
 ---
 
-## Phase 6: Navigation
-- [ ] Create `AppNavGraph.kt` — define `NavHost` with type-safe routes:
+## Phase 6: Navigation ✅
+- [x] Create `AppNavGraph.kt` — define `NavHost` with type-safe routes:
   - `splash` → `home` → `detail/{id}` → `addEdit/{id?}`
-- [ ] Set up `MainActivity.kt` as single-activity host with `NavHost`
+- [x] Set up `MainActivity.kt` as single-activity host with `NavHost`
 
 ---
 

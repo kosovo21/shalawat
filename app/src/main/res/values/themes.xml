@@ -9,8 +9,10 @@
 
     <!-- Splash screen theme using AndroidX SplashScreen API -->
     <style name="Theme.Shalawat.Splash" parent="Theme.SplashScreen">
+        <!-- Set the splash screen background, animated icon, and animation duration. -->
         <item name="windowSplashScreenBackground">#FF006B63</item>
-        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_logo</item>
+        <item name="windowSplashScreenAnimationDuration">2000</item>
         <item name="postSplashScreenTheme">@style/Theme.Shalawat</item>
     </style>
 
