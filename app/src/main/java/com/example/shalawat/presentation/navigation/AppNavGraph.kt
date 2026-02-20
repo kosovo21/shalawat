@@ -10,6 +10,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.shalawat.presentation.home.HomeScreen
 import com.example.shalawat.presentation.splash.SplashScreen
 
 @Composable
@@ -31,10 +32,14 @@ fun AppNavGraph(
         }
 
         composable<HomeRoute> {
-            // Placeholder for Home Screen (Phase 7)
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(text = "Home Screen (Phase 7 Placeholder)")
-            }
+            HomeScreen(
+                onNavigateToDetail = { id ->
+                    navController.navigate(DetailRoute(id))
+                },
+                onNavigateToAddEdit = {
+                    navController.navigate(AddEditRoute(null))
+                }
+            )
         }
 
         composable<DetailRoute> {

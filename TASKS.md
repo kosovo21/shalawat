@@ -53,12 +53,12 @@
 
 ---
 
-## Phase 7: Home Screen (List)
-- [ ] Create `HomeViewModel.kt` — exposes `StateFlow<List<Shalawat>>`, calls `GetAllShalawatUseCase`
-- [ ] Create `HomeScreen.kt` — `LazyColumn` listing shalawat titles
-  - [ ] FAB for navigating to AddEditScreen (create mode)
-  - [ ] Tap item → navigate to DetailScreen
-  - [ ] Swipe-to-dismiss for delete with confirmation dialog
+## Phase 7: Home Screen (List) ✅
+- [x] Create `HomeViewModel.kt` — exposes `StateFlow<List<Shalawat>>`, calls `GetAllShalawatUseCase`
+- [x] Create `HomeScreen.kt` — `LazyColumn` listing shalawat titles
+  - [x] FAB for navigating to AddEditScreen (create mode)
+  - [x] Tap item → navigate to DetailScreen
+  - [x] Swipe-to-dismiss for delete with confirmation dialog
 
 ---
 
