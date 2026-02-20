@@ -6,8 +6,10 @@
         <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>
     <style name="Theme.Shalawat.Splash" parent="Theme.SplashScreen">
+        
         <item name="windowSplashScreenBackground">#FF006B63</item>
-        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_logo</item>
+        <item name="windowSplashScreenAnimationDuration">2000</item>
         <item name="postSplashScreenTheme">@style/Theme.Shalawat</item>
     </style>
 </resources>
