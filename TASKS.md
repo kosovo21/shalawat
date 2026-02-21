@@ -62,24 +62,24 @@
 
 ---
 
-## Phase 8: Detail Screen + Audio Player
-- [ ] Create `DetailViewModel.kt` — loads shalawat by ID, manages ExoPlayer lifecycle
-- [ ] Create `DetailScreen.kt`:
-  - [ ] Display Arabic text, transliteration, translation
-  - [ ] Audio player controls: Play/Pause, Stop, SeekBar, position/duration
-  - [ ] Edit button → navigate to AddEditScreen (edit mode)
-  - [ ] Delete button with confirmation dialog
+## Phase 8: Detail Screen + Audio Player ✅
+- [x] Create `DetailViewModel.kt` — loads shalawat by ID, manages ExoPlayer lifecycle
+- [x] Create `DetailScreen.kt`:
+  - [x] Display Arabic text, transliteration, translation
+  - [x] Audio player controls: Play/Pause, Stop, SeekBar, position/duration
+  - [x] Edit button → navigate to AddEditScreen (edit mode)
+  - [x] Delete button with confirmation dialog
 
 ---
 
-## Phase 9: Add/Edit Screen (CRUD Form)
-- [ ] Create `AddEditViewModel.kt` — handles form state, save/update logic via `SaveShalawatUseCase`
-- [ ] Create `AddEditScreen.kt`:
-  - [ ] Input fields: title, arabicText, transliteration, translation
-  - [ ] Audio file picker using `ActivityResultContracts.GetContent`
-  - [ ] Audio file copy to internal storage via `AudioFileManager`
-  - [ ] Save button → insert or update, navigate back
-  - [ ] Pre-fill fields when in edit mode
+## Phase 9: Add/Edit Screen (CRUD Form) ✅
+- [x] Create `AddEditViewModel.kt` — handles form state, save/update logic via `SaveShalawatUseCase`
+- [x] Create `AddEditScreen.kt`:
+  - [x] Input fields: title, arabicText, transliteration, translation
+  - [x] Audio file picker using `ActivityResultContracts.GetContent`
+  - [x] Audio file copy to internal storage via `AudioFileManager`
+  - [x] Save button → insert or update, navigate back
+  - [x] Pre-fill fields when in edit mode
 
 ---
 
