@@ -28,10 +28,10 @@ data class AddEditFormState(
     val audioFileName: String = "",
     val audioSource: String = "",
     val isLoading: Boolean = false,
-    val isSaving: Boolean = false
+    val isSaving: Boolean = false,
+    val error: String? = null
 ) {
     val isValid: Boolean get() = title.isNotBlank()
-    val isEditMode: Boolean get() = false // set externally via ViewModel
 }
 
 @HiltViewModel
@@ -60,23 +60,34 @@ class AddEditViewModel @Inject constructor(
 
     private fun loadExistingShalawat() {
         viewModelScope.launch {
-            _formState.update { it.copy(isLoading = true) }
-            val shalawat = getShalawatByIdUseCase(shalawatId!!)
-            if (shalawat != null) {
-                existingShalawat = shalawat
+            _formState.update { it.copy(isLoading = true, error = null) }
+            try {
+                val shalawat = getShalawatByIdUseCase(shalawatId!!)
+                if (shalawat != null) {
+                    existingShalawat = shalawat
+                    _formState.update {
+                        it.copy(
+                            title = shalawat.title,
+                            arabicText = shalawat.arabicText,
+                            transliteration = shalawat.transliteration,
+                            translation = shalawat.translation,
+                            audioFileName = shalawat.audioFileName,
+                            audioSource = shalawat.audioSource,
+                            isLoading = false
+                        )
+                    }
+                } else {
+                    _formState.update {
+                        it.copy(isLoading = false, error = "Shalawat not found")
+                    }
+                }
+            } catch (e: Exception) {
                 _formState.update {
                     it.copy(
-                        title = shalawat.title,
-                        arabicText = shalawat.arabicText,
-                        transliteration = shalawat.transliteration,
-                        translation = shalawat.translation,
-                        audioFileName = shalawat.audioFileName,
-                        audioSource = shalawat.audioSource,
-                        isLoading = false
+                        isLoading = false,
+                        error = e.localizedMessage ?: "Failed to load shalawat"
                     )
                 }
-            } else {
-                _formState.update { it.copy(isLoading = false) }
             }
         }
     }
@@ -97,16 +108,26 @@ class AddEditViewModel @Inject constructor(
         _formState.update { it.copy(translation = value) }
     }
 
+    fun clearError() {
+        _formState.update { it.copy(error = null) }
+    }
+
     fun onAudioFilePicked(uri: Uri) {
         viewModelScope.launch {
-            val fileName = withContext(Dispatchers.IO) {
-                repository.copyAudioFile(uri)
-            }
-            _formState.update {
-                it.copy(
-                    audioFileName = fileName,
-                    audioSource = "internal"
-                )
+            try {
+                val fileName = withContext(Dispatchers.IO) {
+                    repository.copyAudioFile(uri)
+                }
+                _formState.update {
+                    it.copy(
+                        audioFileName = fileName,
+                        audioSource = "internal"
+                    )
+                }
+            } catch (e: Exception) {
+                _formState.update {
+                    it.copy(error = e.localizedMessage ?: "Failed to import audio file")
+                }
             }
         }
     }
@@ -116,31 +137,40 @@ class AddEditViewModel @Inject constructor(
         if (!state.isValid) return
 
         viewModelScope.launch {
-            _formState.update { it.copy(isSaving = true) }
+            _formState.update { it.copy(isSaving = true, error = null) }
 
-            val shalawat = if (isEditMode && existingShalawat != null) {
-                existingShalawat!!.copy(
-                    title = state.title,
-                    arabicText = state.arabicText,
-                    transliteration = state.transliteration,
-                    translation = state.translation,
-                    audioFileName = state.audioFileName,
-                    audioSource = state.audioSource
-                )
-            } else {
-                Shalawat(
-                    title = state.title,
-                    arabicText = state.arabicText,
-                    transliteration = state.transliteration,
-                    translation = state.translation,
-                    audioFileName = state.audioFileName,
-                    audioSource = state.audioSource
-                )
+            try {
+                val shalawat = if (isEditMode && existingShalawat != null) {
+                    existingShalawat!!.copy(
+                        title = state.title,
+                        arabicText = state.arabicText,
+                        transliteration = state.transliteration,
+                        translation = state.translation,
+                        audioFileName = state.audioFileName,
+                        audioSource = state.audioSource
+                    )
+                } else {
+                    Shalawat(
+                        title = state.title,
+                        arabicText = state.arabicText,
+                        transliteration = state.transliteration,
+                        translation = state.translation,
+                        audioFileName = state.audioFileName,
+                        audioSource = state.audioSource
+                    )
+                }
+
+                saveShalawatUseCase(shalawat)
+                _formState.update { it.copy(isSaving = false) }
+                onComplete()
+            } catch (e: Exception) {
+                _formState.update {
+                    it.copy(
+                        isSaving = false,
+                        error = e.localizedMessage ?: "Failed to save shalawat"
+                    )
+                }
             }
-
-            saveShalawatUseCase(shalawat)
-            _formState.update { it.copy(isSaving = false) }
-            onComplete()
         }
     }
 }

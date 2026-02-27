@@ -20,6 +20,9 @@ interface ShalawatDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(shalawat: ShalawatEntity)
 
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertAll(vararg shalawat: ShalawatEntity)
+
     @Update
     suspend fun update(shalawat: ShalawatEntity)
 

@@ -83,18 +83,19 @@
 
 ---
 
-## Phase 10: Data Seeding
-- [ ] Add pre-bundled audio files to `assets/audio/`
-- [ ] Implement first-launch detection (SharedPreferences or Room callback)
-- [ ] Seed default shalawat entries into Room database on first launch
+## Phase 10: Data Seeding ✅
+- [x] Add pre-bundled audio files to `assets/audio/`
+- [x] Implement first-launch detection (SharedPreferences or Room callback)
+- [x] Seed default shalawat entries into Room database on first launch
 
 ---
 
-## Phase 11: Polish & Final Integration
-- [ ] Ensure delete also removes audio file from internal storage (if `audioSource == "internal"`)
-- [ ] Add proper error handling and loading states across all screens
-- [ ] Tie ExoPlayer lifecycle to ViewModel with `DisposableEffect`
-- [ ] Test complete navigation flow: Splash → Home → Detail → AddEdit
-- [ ] Test CRUD: create, read, update, delete entries
-- [ ] Test audio playback for both asset and internal audio sources
-- [ ] Final UI polish: typography, colors, Material 3 theming
+## Phase 11: Polish & Final Integration ✅
+- [x] Ensure delete also removes audio file from internal storage (if `audioSource == "internal"`)
+- [x] Add proper error handling and loading states across all screens
+- [x] Tie ExoPlayer lifecycle to ViewModel with `DisposableEffect`
+- [x] Test complete navigation flow: Splash → Home → Detail → AddEdit
+- [x] Test CRUD: create, read, update, delete entries
+- [x] Test audio playback for both asset and internal audio sources
+- [x] Final UI polish: typography, colors, Material 3 theming
+

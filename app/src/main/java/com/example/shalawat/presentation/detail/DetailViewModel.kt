@@ -17,8 +17,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.io.File
@@ -39,6 +42,12 @@ class DetailViewModel @Inject constructor(
     private val _shalawat = MutableStateFlow<Shalawat?>(null)
     val shalawat: StateFlow<Shalawat?> = _shalawat.asStateFlow()
 
+    private val _isLoading = MutableStateFlow(true)
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+
+    private val _error = MutableStateFlow<String?>(null)
+    val error: StateFlow<String?> = _error.asStateFlow()
+
     private val _isPlaying = MutableStateFlow(false)
     val isPlaying: StateFlow<Boolean> = _isPlaying.asStateFlow()
 
@@ -47,6 +56,9 @@ class DetailViewModel @Inject constructor(
 
     private val _duration = MutableStateFlow(0L)
     val duration: StateFlow<Long> = _duration.asStateFlow()
+
+    private val _errorEvent = MutableSharedFlow<String>()
+    val errorEvent: SharedFlow<String> = _errorEvent.asSharedFlow()
 
     private var positionPollingJob: Job? = null
 
@@ -81,9 +93,21 @@ class DetailViewModel @Inject constructor(
 
     private fun loadShalawat() {
         viewModelScope.launch {
-            val result = getShalawatByIdUseCase(shalawatId)
-            _shalawat.value = result
-            result?.let { preparePlayer(it) }
+            _isLoading.value = true
+            _error.value = null
+            try {
+                val result = getShalawatByIdUseCase(shalawatId)
+                if (result != null) {
+                    _shalawat.value = result
+                    preparePlayer(result)
+                } else {
+                    _error.value = "Shalawat not found"
+                }
+            } catch (e: Exception) {
+                _error.value = e.localizedMessage ?: "Failed to load shalawat"
+            } finally {
+                _isLoading.value = false
+            }
         }
     }
 
@@ -129,9 +153,13 @@ class DetailViewModel @Inject constructor(
 
     fun deleteShalawat(onDeleted: () -> Unit) {
         viewModelScope.launch {
-            _shalawat.value?.let {
-                deleteShalawatUseCase(it)
-                onDeleted()
+            try {
+                _shalawat.value?.let {
+                    deleteShalawatUseCase(it)
+                    onDeleted()
+                }
+            } catch (e: Exception) {
+                _errorEvent.emit(e.localizedMessage ?: "Failed to delete shalawat")
             }
         }
     }

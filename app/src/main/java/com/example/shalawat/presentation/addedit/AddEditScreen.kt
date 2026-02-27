@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -30,11 +31,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -50,6 +55,15 @@ fun AddEditScreen(
     viewModel: AddEditViewModel = hiltViewModel()
 ) {
     val formState by viewModel.formState.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    // Show error as Snackbar
+    LaunchedEffect(formState.error) {
+        formState.error?.let { errorMessage ->
+            snackbarHostState.showSnackbar(errorMessage)
+            viewModel.clearError()
+        }
+    }
 
     val audioPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
@@ -61,7 +75,10 @@ fun AddEditScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(if (viewModel.isEditMode) "Edit Shalawat" else "Add Shalawat")
+                    Text(
+                        if (viewModel.isEditMode) "Edit Shalawat" else "Add Shalawat",
+                        fontWeight = FontWeight.Bold
+                    )
                 },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
@@ -74,7 +91,8 @@ fun AddEditScreen(
                     navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
                 )
             )
-        }
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
         if (formState.isLoading) {
             Box(
@@ -83,7 +101,9 @@ fun AddEditScreen(
                     .padding(paddingValues),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator()
+                CircularProgressIndicator(
+                    color = MaterialTheme.colorScheme.primary
+                )
             }
         } else {
             Column(
@@ -101,7 +121,8 @@ fun AddEditScreen(
                     placeholder = { Text("Enter shalawat title") },
                     singleLine = true,
                     isError = formState.title.isBlank() && formState.title.isEmpty().not(),
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp)
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -114,7 +135,8 @@ fun AddEditScreen(
                     placeholder = { Text("Enter Arabic script") },
                     minLines = 3,
                     maxLines = 8,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp)
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -127,7 +149,8 @@ fun AddEditScreen(
                     placeholder = { Text("Enter Latin phonetic text") },
                     minLines = 3,
                     maxLines = 8,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp)
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -140,7 +163,8 @@ fun AddEditScreen(
                     placeholder = { Text("Enter translated meaning") },
                     minLines = 3,
                     maxLines = 8,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp)
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -158,6 +182,7 @@ fun AddEditScreen(
                 if (formState.audioFileName.isNotBlank()) {
                     Card(
                         modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
                         colors = CardDefaults.cardColors(
                             containerColor = MaterialTheme.colorScheme.secondaryContainer
                         )
@@ -194,7 +219,8 @@ fun AddEditScreen(
 
                 OutlinedButton(
                     onClick = { audioPickerLauncher.launch("audio/*") },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp)
                 ) {
                     Icon(
                         Icons.Filled.AudioFile,
@@ -216,7 +242,8 @@ fun AddEditScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),
-                    enabled = formState.isValid && !formState.isSaving
+                    enabled = formState.isValid && !formState.isSaving,
+                    shape = RoundedCornerShape(12.dp)
                 ) {
                     if (formState.isSaving) {
                         CircularProgressIndicator(
