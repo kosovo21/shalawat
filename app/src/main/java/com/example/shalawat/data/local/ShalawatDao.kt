@@ -14,6 +14,9 @@ interface ShalawatDao {
     @Query("SELECT * FROM shalawat ORDER BY createdAt DESC")
     fun getAllShalawat(): Flow<List<ShalawatEntity>>
 
+    @Query("SELECT * FROM shalawat WHERE title LIKE '%' || :query || '%' OR transliteration LIKE '%' || :query || '%' ORDER BY createdAt DESC")
+    fun searchShalawat(query: String): Flow<List<ShalawatEntity>>
+
     @Query("SELECT * FROM shalawat WHERE id = :id")
     suspend fun getShalawatById(id: Int): ShalawatEntity?
 
@@ -28,4 +31,7 @@ interface ShalawatDao {
 
     @Delete
     suspend fun delete(shalawat: ShalawatEntity)
+
+    @Query("UPDATE shalawat SET isFavorite = :isFavorite WHERE id = :id")
+    suspend fun updateFavorite(id: Int, isFavorite: Boolean)
 }

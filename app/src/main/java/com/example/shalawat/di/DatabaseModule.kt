@@ -41,7 +41,15 @@ object DatabaseModule {
                         DatabaseSeeder.seed(daoProvider.get())
                     }
                 }
+
+                override fun onDestructiveMigration(db: SupportSQLiteDatabase) {
+                    super.onDestructiveMigration(db)
+                    CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
+                        DatabaseSeeder.seed(daoProvider.get())
+                    }
+                }
             })
+            .fallbackToDestructiveMigration()
             .build()
     }
 

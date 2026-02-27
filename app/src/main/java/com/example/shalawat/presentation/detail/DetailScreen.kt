@@ -1,5 +1,7 @@
 package com.example.shalawat.presentation.detail
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,28 +12,36 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.ErrorOutline
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Forward5
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Stop
+import androidx.compose.material.icons.filled.Repeat
+import androidx.compose.material.icons.filled.Replay5
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
@@ -50,12 +60,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.shalawat.presentation.theme.DarkForestGreen
+import com.example.shalawat.presentation.theme.EmeraldGreen
+import com.example.shalawat.presentation.theme.ForestGreen
+import com.example.shalawat.presentation.theme.MintGreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,6 +92,7 @@ fun DetailScreen(
     val duration by viewModel.duration.collectAsStateWithLifecycle()
 
     var showDeleteDialog by remember { mutableStateOf(false) }
+    var showMenu by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
 
     // Collect error events
@@ -116,10 +136,25 @@ fun DetailScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(
-                        shalawat?.title ?: "Detail",
-                        fontWeight = FontWeight.Bold
-                    )
+                    Column {
+                        Text(
+                            shalawat?.title ?: "Detail",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        shalawat?.transliteration?.let { translit ->
+                            if (translit.isNotBlank()) {
+                                Text(
+                                    text = translit.take(40) + if (translit.length > 40) "..." else "",
+                                    fontSize = 11.sp,
+                                    color = MintGreen.copy(alpha = 0.6f),
+                                    maxLines = 1
+                                )
+                            }
+                        }
+                    }
                 },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
@@ -128,19 +163,37 @@ fun DetailScreen(
                 },
                 actions = {
                     shalawat?.let {
-                        IconButton(onClick = { onNavigateToEdit(it.id) }) {
-                            Icon(Icons.Filled.Edit, contentDescription = "Edit")
-                        }
-                        IconButton(onClick = { showDeleteDialog = true }) {
-                            Icon(Icons.Filled.Delete, contentDescription = "Delete")
+                        Box {
+                            IconButton(onClick = { showMenu = true }) {
+                                Icon(Icons.Filled.MoreVert, contentDescription = "More")
+                            }
+                            DropdownMenu(
+                                expanded = showMenu,
+                                onDismissRequest = { showMenu = false }
+                            ) {
+                                DropdownMenuItem(
+                                    text = { Text("Edit") },
+                                    onClick = {
+                                        showMenu = false
+                                        onNavigateToEdit(it.id)
+                                    }
+                                )
+                                DropdownMenuItem(
+                                    text = { Text("Delete", color = MaterialTheme.colorScheme.error) },
+                                    onClick = {
+                                        showMenu = false
+                                        showDeleteDialog = true
+                                    }
+                                )
+                            }
                         }
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
-                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
-                    actionIconContentColor = MaterialTheme.colorScheme.onPrimary
+                    containerColor = ForestGreen,
+                    titleContentColor = Color.White,
+                    navigationIconContentColor = Color.White,
+                    actionIconContentColor = Color.White
                 )
             )
         },
@@ -152,12 +205,14 @@ fun DetailScreen(
                     duration = duration,
                     onPlay = viewModel::play,
                     onPause = viewModel::pause,
-                    onStop = viewModel::stop,
-                    onSeek = viewModel::seekTo
+                    onSeek = viewModel::seekTo,
+                    onForward = { viewModel.seekTo((currentPosition + 5000).coerceAtMost(duration)) },
+                    onRewind = { viewModel.seekTo((currentPosition - 5000).coerceAtLeast(0)) }
                 )
             }
         },
-        snackbarHost = { SnackbarHost(snackbarHostState) }
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         when {
             isLoading -> {
@@ -167,9 +222,7 @@ fun DetailScreen(
                         .padding(paddingValues),
                     contentAlignment = Alignment.Center
                 ) {
-                    CircularProgressIndicator(
-                        color = MaterialTheme.colorScheme.primary
-                    )
+                    CircularProgressIndicator(color = MintGreen)
                 }
             }
 
@@ -210,72 +263,121 @@ fun DetailScreen(
                         .verticalScroll(rememberScrollState())
                         .padding(16.dp)
                 ) {
-                    // Arabic Text
+                    // ── Arabic Text Card ──
                     if (shalawat!!.arabicText.isNotBlank()) {
-                        SectionHeader(title = "Arabic Text")
                         Card(
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(16.dp),
                             colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer
+                                containerColor = ForestGreen
                             )
                         ) {
-                            Text(
-                                text = shalawat!!.arabicText,
-                                style = MaterialTheme.typography.headlineSmall,
-                                textAlign = TextAlign.End,
-                                lineHeight = 42.sp,
+                            Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(20.dp),
-                                color = MaterialTheme.colorScheme.onPrimaryContainer
-                            )
+                                    .padding(20.dp)
+                            ) {
+                                // Checkmark icon
+                                Icon(
+                                    Icons.Filled.CheckCircle,
+                                    contentDescription = null,
+                                    tint = MintGreen.copy(alpha = 0.5f),
+                                    modifier = Modifier
+                                        .size(28.dp)
+                                        .align(Alignment.CenterHorizontally)
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Text(
+                                    text = shalawat!!.arabicText,
+                                    style = MaterialTheme.typography.headlineSmall,
+                                    textAlign = TextAlign.End,
+                                    lineHeight = 42.sp,
+                                    modifier = Modifier.fillMaxWidth(),
+                                    color = Color.White
+                                )
+                            }
                         }
-                        Spacer(modifier = Modifier.height(20.dp))
+                        Spacer(modifier = Modifier.height(24.dp))
                     }
 
-                    // Transliteration
+                    // ── Transliteration Section ──
                     if (shalawat!!.transliteration.isNotBlank()) {
-                        SectionHeader(title = "Transliteration")
-                        Card(
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(16.dp),
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.secondaryContainer
-                            )
-                        ) {
-                            Text(
-                                text = shalawat!!.transliteration,
-                                style = MaterialTheme.typography.bodyLarge,
-                                lineHeight = 28.sp,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(20.dp),
-                                color = MaterialTheme.colorScheme.onSecondaryContainer
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(20.dp))
+                        SectionLabel(title = "TRANSLITERATION")
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "\"${shalawat!!.transliteration}\"",
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontStyle = FontStyle.Italic,
+                            lineHeight = 26.sp,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 4.dp)
+                        )
+                        Spacer(modifier = Modifier.height(24.dp))
                     }
 
-                    // Translation
+                    // ── Translation Section ──
                     if (shalawat!!.translation.isNotBlank()) {
-                        SectionHeader(title = "Translation")
+                        SectionLabel(title = "TRANSLATION")
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "\"${shalawat!!.translation}\"",
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontStyle = FontStyle.Italic,
+                            lineHeight = 26.sp,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 4.dp)
+                        )
+                        Spacer(modifier = Modifier.height(24.dp))
+                    }
+
+                    // ── Virtues Card ──
+                    if (shalawat!!.virtues.isNotBlank()) {
                         Card(
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(16.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .border(
+                                    width = 1.dp,
+                                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
+                                    shape = RoundedCornerShape(12.dp)
+                                ),
+                            shape = RoundedCornerShape(12.dp),
                             colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.tertiaryContainer
+                                containerColor = MaterialTheme.colorScheme.surface
                             )
                         ) {
-                            Text(
-                                text = shalawat!!.translation,
-                                style = MaterialTheme.typography.bodyLarge,
-                                lineHeight = 28.sp,
+                            Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(20.dp),
-                                color = MaterialTheme.colorScheme.onTertiaryContainer
-                            )
+                                    .padding(16.dp),
+                                verticalAlignment = Alignment.Top
+                            ) {
+                                Icon(
+                                    Icons.Filled.Info,
+                                    contentDescription = null,
+                                    tint = MintGreen,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = "Virtues",
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 15.sp,
+                                        color = MaterialTheme.colorScheme.onSurface
+                                    )
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(
+                                        text = shalawat!!.virtues,
+                                        fontSize = 13.sp,
+                                        lineHeight = 19.sp,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                            }
                         }
                     }
 
@@ -286,16 +388,20 @@ fun DetailScreen(
     }
 }
 
+// ── Section Label (uppercase green header) ──
+
 @Composable
-private fun SectionHeader(title: String) {
+private fun SectionLabel(title: String) {
     Text(
         text = title,
-        style = MaterialTheme.typography.titleMedium,
-        fontWeight = FontWeight.SemiBold,
-        color = MaterialTheme.colorScheme.primary,
-        modifier = Modifier.padding(bottom = 8.dp)
+        fontSize = 12.sp,
+        fontWeight = FontWeight.Bold,
+        color = MintGreen,
+        letterSpacing = 2.sp
     )
 }
+
+// ── Audio Player Bar (dark green, redesigned controls) ──
 
 @Composable
 private fun AudioPlayerBar(
@@ -304,38 +410,26 @@ private fun AudioPlayerBar(
     duration: Long,
     onPlay: () -> Unit,
     onPause: () -> Unit,
-    onStop: () -> Unit,
-    onSeek: (Long) -> Unit
+    onSeek: (Long) -> Unit,
+    onForward: () -> Unit,
+    onRewind: () -> Unit
 ) {
     val safeDuration = duration.coerceAtLeast(1L)
 
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
+        shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
+            containerColor = ForestGreen
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 12.dp)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp, vertical = 12.dp)
         ) {
-            // Seek bar
-            Slider(
-                value = currentPosition.toFloat(),
-                onValueChange = { onSeek(it.toLong()) },
-                valueRange = 0f..safeDuration.toFloat(),
-                modifier = Modifier.fillMaxWidth(),
-                colors = SliderDefaults.colors(
-                    thumbColor = MaterialTheme.colorScheme.primary,
-                    activeTrackColor = MaterialTheme.colorScheme.primary,
-                    inactiveTrackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
-                )
-            )
-
-            // Position / Duration labels
+            // Time labels + Slider
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -343,16 +437,26 @@ private fun AudioPlayerBar(
                 Text(
                     text = formatDuration(currentPosition),
                     style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MintGreen.copy(alpha = 0.6f)
                 )
                 Text(
                     text = formatDuration(duration),
                     style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MintGreen.copy(alpha = 0.6f)
                 )
             }
 
-            Spacer(modifier = Modifier.height(4.dp))
+            Slider(
+                value = currentPosition.toFloat(),
+                onValueChange = { onSeek(it.toLong()) },
+                valueRange = 0f..safeDuration.toFloat(),
+                modifier = Modifier.fillMaxWidth(),
+                colors = SliderDefaults.colors(
+                    thumbColor = MintGreen,
+                    activeTrackColor = MintGreen,
+                    inactiveTrackColor = MintGreen.copy(alpha = 0.15f)
+                )
+            )
 
             // Player controls
             Row(
@@ -360,31 +464,72 @@ private fun AudioPlayerBar(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Stop button
-                OutlinedIconButton(
-                    onClick = onStop,
-                    modifier = Modifier.size(48.dp)
+                // Album art circle placeholder
+                Box(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .background(EmeraldGreen),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Icon(Icons.Filled.Stop, contentDescription = "Stop")
+                    Text(
+                        "♫",
+                        color = Color.White,
+                        fontSize = 16.sp
+                    )
                 }
 
-                Spacer(modifier = Modifier.size(16.dp))
+                Spacer(modifier = Modifier.width(20.dp))
 
-                // Play / Pause button
+                // Rewind 5s
+                IconButton(onClick = onRewind, modifier = Modifier.size(36.dp)) {
+                    Icon(
+                        Icons.Filled.Replay5,
+                        contentDescription = "Rewind 5s",
+                        tint = Color.White.copy(alpha = 0.7f),
+                        modifier = Modifier.size(22.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                // Play / Pause
                 FilledIconButton(
                     onClick = { if (isPlaying) onPause() else onPlay() },
-                    modifier = Modifier.size(56.dp),
+                    modifier = Modifier.size(52.dp),
                     colors = IconButtonDefaults.filledIconButtonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
+                        containerColor = MintGreen,
+                        contentColor = DarkForestGreen
                     )
                 ) {
                     Icon(
                         imageVector = if (isPlaying) Icons.Filled.Pause else Icons.Filled.PlayArrow,
                         contentDescription = if (isPlaying) "Pause" else "Play",
-                        modifier = Modifier.size(32.dp)
+                        modifier = Modifier.size(28.dp)
                     )
                 }
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                // Forward 5s
+                IconButton(onClick = onForward, modifier = Modifier.size(36.dp)) {
+                    Icon(
+                        Icons.Filled.Forward5,
+                        contentDescription = "Forward 5s",
+                        tint = Color.White.copy(alpha = 0.7f),
+                        modifier = Modifier.size(22.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(20.dp))
+
+                // Favorite / Loop area
+                Icon(
+                    Icons.Filled.FavoriteBorder,
+                    contentDescription = "Favorite",
+                    tint = Color.White.copy(alpha = 0.4f),
+                    modifier = Modifier.size(20.dp)
+                )
             }
 
             Spacer(modifier = Modifier.height(8.dp))

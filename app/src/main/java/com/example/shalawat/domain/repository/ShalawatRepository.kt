@@ -10,10 +10,12 @@ import kotlinx.coroutines.flow.Flow
  */
 interface ShalawatRepository {
     fun getAllShalawat(): Flow<List<Shalawat>>
+    fun searchShalawat(query: String): Flow<List<Shalawat>>
     suspend fun getShalawatById(id: Int): Shalawat?
     suspend fun insert(shalawat: Shalawat)
     suspend fun update(shalawat: Shalawat)
     suspend fun delete(shalawat: Shalawat)
+    suspend fun toggleFavorite(id: Int, isFavorite: Boolean)
     fun copyAudioFile(uri: Uri): String
     fun deleteAudioFile(fileName: String)
 }

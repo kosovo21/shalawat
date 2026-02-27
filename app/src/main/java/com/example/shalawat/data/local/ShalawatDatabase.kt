@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 
 @Database(
     entities = [ShalawatEntity::class],
-    version = 1,
+    version = 3,
     exportSchema = false
 )
 abstract class ShalawatDatabase : RoomDatabase() {

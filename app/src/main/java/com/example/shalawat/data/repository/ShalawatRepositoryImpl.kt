@@ -24,6 +24,12 @@ class ShalawatRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun searchShalawat(query: String): Flow<List<Shalawat>> {
+        return dao.searchShalawat(query).map { entities ->
+            entities.map { it.toDomain() }
+        }
+    }
+
     override suspend fun getShalawatById(id: Int): Shalawat? {
         return dao.getShalawatById(id)?.toDomain()
     }
@@ -38,6 +44,10 @@ class ShalawatRepositoryImpl @Inject constructor(
 
     override suspend fun delete(shalawat: Shalawat) {
         dao.delete(shalawat.toEntity())
+    }
+
+    override suspend fun toggleFavorite(id: Int, isFavorite: Boolean) {
+        dao.updateFavorite(id, isFavorite)
     }
 
     override fun copyAudioFile(uri: Uri): String {

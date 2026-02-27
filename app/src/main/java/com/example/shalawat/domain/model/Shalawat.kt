@@ -12,6 +12,9 @@ data class Shalawat(
     val translation: String = "",
     val audioFileName: String = "",
     val audioSource: String = "", // "asset" or "internal"
+    val category: String = "", // "popular", "daily", "healing", "protection"
+    val isFavorite: Boolean = false,
+    val virtues: String = "",
     val createdAt: Long = System.currentTimeMillis(),
     val updatedAt: Long = System.currentTimeMillis()
 )

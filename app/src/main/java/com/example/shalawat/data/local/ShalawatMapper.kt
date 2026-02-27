@@ -15,6 +15,9 @@ fun ShalawatEntity.toDomain(): Shalawat {
         translation = translation,
         audioFileName = audioFileName,
         audioSource = audioSource,
+        category = category,
+        isFavorite = isFavorite,
+        virtues = virtues,
         createdAt = createdAt,
         updatedAt = updatedAt
     )
@@ -29,6 +32,9 @@ fun Shalawat.toEntity(): ShalawatEntity {
         translation = translation,
         audioFileName = audioFileName,
         audioSource = audioSource,
+        category = category,
+        isFavorite = isFavorite,
+        virtues = virtues,
         createdAt = createdAt,
         updatedAt = updatedAt
     )
