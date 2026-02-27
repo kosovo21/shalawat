@@ -1,4 +1,0 @@
-int drawable ic_logo 0x0
-int string app_name 0x0
-int style Theme_Shalawat 0x0
-int style Theme_Shalawat_Splash 0x0
